@@ -1,24 +1,24 @@
 import socket
 
-def main():
-    host = "127.0.0.1"  # Use the server's IP address if it's on a different machine
-    port = 8080
+def get_pressure_from_user():
+    while True:
+        try:
+            pressure_bar = float(input("Enter pressure value in bar: "))
+return pressure_bar
+    except ValueError:
+        print("Invalid input, Please put the right value:")
 
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect((host, port))
+s = socket.socket()
+port = 8888
+s.connect(('192.168.138.128', port))
 
-    # Get pressure in bar from the user
-    pressure_in_bar = float(input("Enter pressure in bar: "))
+data = s.recv(1024)
+print(data.decode())
 
-    # Send pressure to the server
-    client_socket.send(str(pressure_in_bar).encode())
+pressure_bar = get_pressure_from_user()
+s.send(str(pressure_bar).encode())
 
-    # Receive atmosphere-standard value from the server
-    atmosphere_standard = client_socket.recv(1024).decode()
+response = s.recv(1024)
+print(response.decode())
 
-    print(f"Atmosphere-Standard value: {atmosphere_standard}")
-
-    client_socket.close()
-
-if __name__ == "__main__":
-    main()
+s.close()
