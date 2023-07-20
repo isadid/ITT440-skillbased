@@ -10,33 +10,20 @@ quotes = [
 "The only time you fail is when you fall down and stay down."
 ]
 
+
+def get_random_quote():
+return random.choice(quotes)
 def handle_client(client_socket):
-    # Retrieve a random quote
-    random_quote = random.choice(quotes)
-
-    # Send the quote to the client
-    client_socket.send(random_quote.encode())
-
-    # Close the connection
-    client_socket.close()
-
-def main():
-    host = "127.0.0.1"
-    port = 8888
-
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind((host, port))
-    server_socket.listen(5)
-
-    print("Quote of the Day (QOTD) Server is listening...")
-
-    while True:
-        client_socket, client_address = server_socket.accept()
-        print(f"Connection from {client_address}")
-
-        # Start a new thread to handle the client
-        client_thread = threading.Thread(target=handle_client, args=(client_socket,))
-        client_thread.start()
-
-if __name__ == "__main__":
-    main()
+print("Connected from client:", client_socket.getpeername())
+quote = get_random_quote()
+client_socket.send(quote.encode())
+client_socket.close()
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_socket.bind(('192.168.138.128', 8888))
+server_socket.listen(5)
+print("Quote of the Day server is running on port 8888...")
+while True:
+client_socket, addr = server_socket.accept()
+client_socket.send(b'Successfully connected to QOTD server!')
+client_handler = threading.Thread(target=handle_client, args=(client_socket,))
+client_handler.start()
